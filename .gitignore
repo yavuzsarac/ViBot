@@ -1,0 +1,5 @@
+.env
+__pycache__/
+cookies.txt
+vibot_subs*
+*.vtt
