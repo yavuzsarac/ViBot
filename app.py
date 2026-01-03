@@ -8,7 +8,6 @@ import re
 import time
 import random
 
-# --- SAYFA AYARLARI ---
 st.set_page_config(
     page_title="ViBot",
     page_icon="🤖",
@@ -18,7 +17,6 @@ st.set_page_config(
 
 )
 
-# --- CSS: MODERN TASARIM & İMZA ---
 st.markdown("""
 <style>
     .stApp {
@@ -48,7 +46,6 @@ st.markdown("""
         margin-top: 20px;
     }
     
-    /* İMZA KISMI (Sabit Footer) */
     .footer {
         position: fixed; left: 0; bottom: 0; width: 100%;
         background-color: #0E1117; color: #808495;
@@ -58,17 +55,14 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- BAŞLIK ---
 st.markdown('<p class="header-text">ViBot 🤖</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-text">Yapay Zeka Destekli Video Analiz Asistanı</p>', unsafe_allow_html=True)
 
-# --- API KONTROL ---
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
     st.error("⚠️ API Anahtarı Bulunamadı! (.env dosyasını kontrol et)")
     st.stop()
 
-# --- TEMİZLİK ---
 def clean_vtt(text):
     lines = text.split('\n')
     cleaned = []
@@ -83,7 +77,6 @@ def clean_vtt(text):
             seen.add(clean)
     return " ".join(cleaned)
 
-# --- ZEKİ İNDİRME FONKSİYONU ---
 def get_transcript_smart(url):
     try:
         for f in glob.glob("vibot_subs*"):
@@ -110,20 +103,16 @@ def get_transcript_smart(url):
         if not files:
             return None, "Bu videoda ne yazık ki hiçbir dilde altyazı veya konuşma bulunamadı."
 
-        # DOSYA SEÇİM MANTIĞI:
         selected_file = None
-        # 1. Önce Türkçe var mı?
         for f in files:
             if '.tr' in f:
                 selected_file = f
                 break
-        # 2. Yoksa İngilizce var mı?
         if not selected_file:
             for f in files:
                 if '.en' in f:
                     selected_file = f
                     break
-        # 3. Yoksa en büyük dosyayı al (en çok yazı olan)
         if not selected_file:
             selected_file = max(files, key=os.path.getsize)
 
@@ -140,7 +129,6 @@ def get_transcript_smart(url):
     except Exception as e:
         return None, f"Hata: {str(e)}"
 
-# --- ARAYÜZ ---
 video_url = st.text_input("", placeholder="Video linkini yapıştır...", label_visibility="collapsed")
 analyze_btn = st.button("Analiz Et ✨")
 
@@ -187,5 +175,4 @@ if 'full_text' in st.session_state:
             ans = llm.invoke(f"Metin: {st.session_state['full_text'][:30000]}\nSoru: {q}\nCevap:")
             st.write(ans.content)
 
-# --- İMZA (FOOTER) ---
 st.markdown('<div class="footer">Developed by Yavuz Saraç 🚀 | ViBot v1.0</div>', unsafe_allow_html=True)
